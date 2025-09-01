@@ -38,6 +38,10 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(Cart::class);
     }
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::MEDIA_NAME)

@@ -137,4 +137,19 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Email verified successfully.'], 200);
     }
+    function logout()
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            $user->currentAccessToken()->delete();
+            return response()->json([
+                'message' => 'Logout successfully.'
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Unauthenticated.'
+        ], 401);
+    }
 }

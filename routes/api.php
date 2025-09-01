@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\MainController;
+use App\Http\Controllers\V1\Client\WishlistController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,11 +37,20 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/banner','banner');
 });
 
+//cart
 Route::controller(CartController::class)->group(function () {
     Route::get('/view-cart', 'view_cart')->middleware('auth:sanctum');
     Route::post('/add-to-cart', 'add_cart')->middleware('auth:sanctum');
     Route::post('/update-cart/{cart}', 'update_cart')->middleware('auth:sanctum');
     Route::delete('/delete-cart/{cart}', 'delete_from_cart')->middleware('auth:sanctum');
+});
+
+
+//wishlist
+Route::controller(WishlistController::class)->group(function () {
+    Route::get('/view-favourites', 'view_favorites')->middleware('auth:sanctum');
+    Route::post('/add-favourites', 'add_favorites')->middleware('auth:sanctum');
+    Route::delete('/remove-favourite/{favorites}', 'remove_favorites')->middleware('auth:sanctum');
 });
 
 //Admin section

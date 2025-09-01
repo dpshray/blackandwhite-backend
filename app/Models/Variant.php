@@ -13,7 +13,6 @@ class Variant extends Model implements HasMedia
 {
     //
     use InteractsWithMedia, HasEvents;
-    use SoftDeletes;
     const MEDIA_NAME = 'variant';
     protected $fillable = [
     'product_id',

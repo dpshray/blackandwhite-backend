@@ -23,9 +23,9 @@ class CartRequest extends FormRequest
     {
         return [
             //
-            'product_id'=>'required',
+            'product_id'=>'required|exists:products,id',
             'quantity'=>'required|integer',
-            'variant_id'=>'required'
+            'variant_id'=>'required|exists:variants,id'
         ];
     }
 }
