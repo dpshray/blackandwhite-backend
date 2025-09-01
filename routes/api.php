@@ -5,6 +5,7 @@ use App\Http\Controllers\V1\Admin\CategoriesController;
 use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Client\BillingInformationController;
 use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\MainController;
 use App\Http\Controllers\V1\Client\WishlistController;
@@ -45,6 +46,13 @@ Route::controller(CartController::class)->group(function () {
     Route::delete('/delete-cart/{cart}', 'delete_from_cart')->middleware('auth:sanctum');
 });
 
+//information
+Route::controller(BillingInformationController::class)->group(function () {
+    Route::post('/add-address', 'store')->middleware('auth:sanctum');
+    Route::get('/view-address', 'view')->middleware('auth:sanctum');
+    Route::post('/edit-address/{billing}', 'update')->middleware('auth:sanctum');
+    Route::delete('/delete-address/{billing}', 'delete')->middleware('auth:sanctum');
+});
 
 //wishlist
 Route::controller(WishlistController::class)->group(function () {
