@@ -15,6 +15,10 @@ class Product extends Model implements HasMedia
     use InteractsWithMedia, HasEvents;
     use SoftDeletes;
     const MEDIA_NAME = 'product';
+    protected $casts = [
+        'price'=> 'integer',
+        'discount_price'=> 'integer',
+    ];
     protected $fillable = [
         'name',
         'slug',

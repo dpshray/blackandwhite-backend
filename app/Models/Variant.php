@@ -14,6 +14,11 @@ class Variant extends Model implements HasMedia
     //
     use InteractsWithMedia, HasEvents;
     const MEDIA_NAME = 'variant';
+    protected $casts = [
+        'price'=> 'integer',
+        'discount_price'=> 'integer',
+        'stock'=> 'integer',
+    ];
     protected $fillable = [
     'product_id',
     'size',

@@ -27,7 +27,7 @@ class MainController extends Controller
         $query = Product::with(['categories', 'variants']);
         if ($category) {
             $query->whereHas('categories', function ($q) use ($category) {
-                $q->where('name', $category);
+                $q->where('slug', $category);
             });
         }
         if ($product_name) {

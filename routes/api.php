@@ -8,6 +8,7 @@ use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Client\BillingInformationController;
 use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\MainController;
+use App\Http\Controllers\V1\Client\OrderController;
 use App\Http\Controllers\V1\Client\WishlistController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
@@ -59,6 +60,14 @@ Route::controller(WishlistController::class)->group(function () {
     Route::get('/view-favourites', 'view_favorites')->middleware('auth:sanctum');
     Route::post('/add-favourites', 'add_favorites')->middleware('auth:sanctum');
     Route::delete('/remove-favourite/{favorites}', 'remove_favorites')->middleware('auth:sanctum');
+});
+
+
+//order
+Route::controller(OrderController::class)->group(function () {
+    Route::get('/order-history', 'history_of_order')->middleware('auth:sanctum');
+    Route::post('/order-item', 'add_order')->middleware('auth:sanctum');
+    Route::post('/order-edit/{order}', 'order_edit')->middleware('auth:sanctum');
 });
 
 //Admin section
