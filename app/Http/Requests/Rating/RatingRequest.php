@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Cart;
+namespace App\Http\Requests\Rating;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class CartRequest extends FormRequest
+class RatingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,14 +22,9 @@ class CartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|exists:products,id',
-            'quantity'   => 'sometimes|integer|min:1',
-            'variant_id' => [
-                'sometimes',
-                Rule::exists('variants', 'id')->where(function ($query) {
-                    return $query->where('product_id', $this->product_id);
-                }),
-            ],
+            //
+            'rating'=>'required|between:0,5',
+            'review'=>'required|string|max:255',
         ];
     }
 }

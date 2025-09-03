@@ -31,7 +31,7 @@ class ProductDetailResource extends JsonResource
             'categories' => $this->categories->map(function ($category) {
                 return [
                     'categories_id' => $category->id,
-                    'categories_title' => $category->name,
+                    'categories_title' => $category->title,
                     'categories_slug' => $category->slug,
                 ];
             }),

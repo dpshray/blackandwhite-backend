@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\MainController;
 use App\Http\Controllers\V1\Client\OrderController;
 use App\Http\Controllers\V1\Client\WishlistController;
+use App\Http\Middleware\AdminCloneMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -72,7 +73,7 @@ Route::controller(OrderController::class)->group(function () {
 
 //Admin section
 Route::prefix('admin')->group(function () {
-    Route::middleware(['auth:sanctum', 'verified', AdminMiddleware::class])->group(function () {
+    Route::middleware(['auth:sanctum', 'verified', AdminMiddleware::class,AdminCloneMiddleware::class])->group(function () {
         Route::controller(ProductController::class)->group(function () {
             Route::post('/add-product', 'add_product');
             Route::post('/update-product/{product}', 'update_product');

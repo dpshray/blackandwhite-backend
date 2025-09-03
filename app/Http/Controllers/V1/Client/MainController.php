@@ -12,6 +12,7 @@ use App\Models\Categories;
 use App\Models\Product;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MainController extends Controller
 {
@@ -24,6 +25,8 @@ class MainController extends Controller
         $product_name = $request->query('search');
         $limit = $request->input('limit', 9);
         $sort = $request->query('sort');
+        $size = $request->query('size');
+        $color = $request->query('color');
         $query = Product::with(['categories', 'variants']);
         if ($category) {
             $query->whereHas('categories', function ($q) use ($category) {
@@ -32,6 +35,19 @@ class MainController extends Controller
         }
         if ($product_name) {
             $query->where('name', 'like', '%' . $product_name . '%');
+        }
+        // filter by size
+        if ($size) {
+            $query->whereHas('variants', function ($q) use ($size) {
+                $q->where('size', $size);
+            });
+        }
+
+        // filter by color
+        if ($color) {
+            $query->whereHas('variants', function ($q) use ($color) {
+                $q->where('color', $color);
+            });
         }
         // Sorting logic
         if ($sort === 'price_high') {
@@ -42,17 +58,16 @@ class MainController extends Controller
             $query->orderByRaw('(price - discount_price) DESC');
         } elseif ($sort === 'new') {
             $query->orderBy('created_at', 'desc');
+        } elseif ($sort === 'best_seller') {
+            // Add total_sold column using relationship
+            $query->withCount(['variants as total_sold' => function ($q) {
+                $q->join('order_items', 'variants.id', '=', 'order_items.variant_id')
+                    ->join('orders', 'orders.id', '=', 'order_items.order_id')
+                    ->where('orders.status', 'completed') // optional filter
+                    ->select(DB::raw('COALESCE(SUM(order_items.quantity), 0)'));
+            }])
+                ->orderByDesc('total_sold');
         }
-        //  elseif ($sort === 'best_seller') {
-        //     // Add total_sold column using relationship
-        //     $query->withCount(['variants as total_sold' => function ($q) {
-        //         $q->join('order_items', 'variants.id', '=', 'order_items.variant_id')
-        //             ->join('orders', 'orders.id', '=', 'order_items.order_id')
-        //             ->where('orders.status', 'completed') // optional filter
-        //             ->select(DB::raw('COALESCE(SUM(order_items.quantity), 0)'));
-        //     }])
-        //         ->orderByDesc('total_sold');
-        // }
 
         $products = $query->orderBy('created_at', 'desc')->paginate($limit);
 
@@ -86,7 +101,7 @@ class MainController extends Controller
     }
     function Banner()
     {
-        $banner=Banner::all();
+        $banner = Banner::all();
         if (!$banner) {
             return $this->apiError('Main banner not found');
         }
