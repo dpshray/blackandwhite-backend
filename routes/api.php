@@ -80,6 +80,7 @@ Route::prefix('admin')->group(function () {
             Route::delete('/delete-product/{product}', 'delete_product');
             Route::post('/restore-product/{id}', 'restore_product');
 
+
         });
         Route::controller(BannerController::class)->group(function () {
             Route::post('/add-banner', 'add_banner');
