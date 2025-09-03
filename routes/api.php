@@ -79,8 +79,6 @@ Route::prefix('admin')->group(function () {
             Route::post('/update-product/{product}', 'update_product');
             Route::delete('/delete-product/{product}', 'delete_product');
             Route::post('/restore-product/{id}', 'restore_product');
-
-
         });
         Route::controller(BannerController::class)->group(function () {
             Route::post('/add-banner', 'add_banner');
