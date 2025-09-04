@@ -47,10 +47,6 @@ class CartController extends Controller
     function add_cart(CartRequest $request)
     {
         $user = Auth::user();
-        $exists = Cart::where('user_id', $user->id)->where('variant_id', $request->variant_id)->exists();
-        if ($exists) {
-            return $this->apiError('This product already exist on cart');
-        }
         $variantId = $request->variant_id;
 
         if (!$variantId) {
@@ -59,6 +55,10 @@ class CartController extends Controller
                 return $this->apiError('No variant found for this product');
             }
             $variantId = $variant->id;
+        }
+        $exists = Cart::where('user_id', $user->id)->where('variant_id',$variantId)->exists();
+        if ($exists) {
+            return $this->apiError('This product already exist on cart');
         }
         $cart = Cart::create([
             'user_id' => $user->id,
