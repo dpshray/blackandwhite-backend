@@ -60,7 +60,7 @@ Route::controller(BillingInformationController::class)->group(function () {
 Route::controller(WishlistController::class)->group(function () {
     Route::get('/view-favourites', 'view_favorites')->middleware('auth:sanctum');
     Route::post('/add-favourites', 'add_favorites')->middleware('auth:sanctum');
-    Route::delete('/remove-favourite/{favorites}', 'remove_favorites')->middleware('auth:sanctum');
+    Route::delete('/remove-favourite/{wishlist}', 'remove_favorites')->middleware('auth:sanctum');
 });
 
 
