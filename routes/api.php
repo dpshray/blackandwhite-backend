@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\V1\Admin\BannerController;
 use App\Http\Controllers\V1\Admin\CategoriesController;
+use App\Http\Controllers\V1\Admin\DashboardController;
 use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
@@ -93,6 +94,15 @@ Route::prefix('admin')->group(function () {
         Route::controller(UserController::class)->group(function () {
             Route::get('/view-user', 'View_User');
             Route::delete('/delete-user/{user}', 'delete');
+        });
+        Route::controller(DashboardController::class)->group(function () {
+            Route::get('/total-order', 'total_order');
+            Route::get('/total-revenue', 'total_revenue');
+            Route::get('/stock-alerts', 'stock_alerts');
+            Route::get('/total-user', 'total_user');
+            Route::get('/total-product', 'total_product');
+            Route::get('/best-seller', 'best_seller');
+            Route::get('/line-chart', 'line_chart');
         });
     });
 });
