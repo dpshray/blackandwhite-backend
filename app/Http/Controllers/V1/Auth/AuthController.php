@@ -33,10 +33,9 @@ class AuthController extends Controller
             ]);
 
 
-            // $user->profile()->create([
-            //     'user_id' => $user->id,
-            //     'name' => $request->name,
-            // ]);
+            $user->profile()->create([
+                'user_id' => $user->id,
+            ]);
 
             event(new Registered($user));
         });

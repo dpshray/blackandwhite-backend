@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\Client\BillingInformationController;
 use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\MainController;
 use App\Http\Controllers\V1\Client\OrderController;
+use App\Http\Controllers\V1\Client\ProfileController;
 use App\Http\Controllers\V1\Client\WishlistController;
 use App\Http\Middleware\AdminCloneMiddleware;
 use App\Http\Middleware\AdminMiddleware;
@@ -70,6 +71,12 @@ Route::controller(OrderController::class)->group(function () {
     Route::get('/order-history', 'history_of_order')->middleware('auth:sanctum');
     Route::post('/order-item', 'add_order')->middleware('auth:sanctum');
     Route::post('/order-edit/{order}', 'order_edit')->middleware('auth:sanctum');
+});
+
+//profile
+Route::controller(ProfileController::class)->group(function () {
+    Route::get('/profile', 'view_profile')->middleware('auth:sanctum');
+    Route::post('/update-profile', 'edit_profile')->middleware('auth:sanctum');
 });
 
 //Admin section
