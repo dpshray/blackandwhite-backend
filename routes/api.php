@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\V1\Admin\AdminOrderController;
 use App\Http\Controllers\V1\Admin\BannerController;
 use App\Http\Controllers\V1\Admin\CategoriesController;
 use App\Http\Controllers\V1\Admin\DashboardController;
@@ -110,6 +111,10 @@ Route::prefix('admin')->group(function () {
             Route::get('/total-product', 'total_product');
             Route::get('/best-seller', 'best_seller');
             Route::get('/line-chart', 'line_chart');
+        });
+        Route::controller(AdminOrderController::class)->group(function () {
+            Route::get('/all-order', 'all_order');
+            Route::post('/update-order/{order}', 'update_order');
         });
     });
 });
