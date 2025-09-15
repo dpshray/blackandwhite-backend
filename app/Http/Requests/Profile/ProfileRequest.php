@@ -24,7 +24,7 @@ class ProfileRequest extends FormRequest
         return [
             //
             'phone_number'=>'required|numeric',
-            'gender'=>'required|in:male,female,other',
+            'gender'=>'required|in:male,female,others',
             'date_of_birth'=>'required|date',
             'image'=>'sometimes|file|mimes:png,jpg'
         ];

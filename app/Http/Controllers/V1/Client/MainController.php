@@ -103,9 +103,10 @@ class MainController extends Controller
         $data = new ProductDetailResource($product);
         return $this->apiSuccess('product was found', $data);
     }
-    function Banner()
+    function Banner(Request $request)
     {
-        $banner = Banner::paginate(9);
+        $limit = $request->input('limit', 9);
+        $banner = Banner::paginate($limit);
         if (!$banner) {
             return $this->apiError('Main banner not found');
         }
