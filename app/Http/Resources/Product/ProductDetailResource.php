@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Models\Product;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -27,7 +28,10 @@ class ProductDetailResource extends JsonResource
             'pattern' => $this->pattern,
             'fabric' => $this->fabric,
             'material' => $this->material,
-            'image' => $this->getFirstMediaUrl('product', 'image') ?: null,
+            // 'image' => $this->getFirstMediaUrl('product', 'image') ?: null,
+            'image' => $this->getMedia(Product::MEDIA_NAME)->map(function ($media) {
+                return $media->getUrl();
+            }),
             'categories' => $this->categories->map(function ($category) {
                 return [
                     'categories_id' => $category->id,

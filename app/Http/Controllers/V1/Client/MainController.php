@@ -67,6 +67,10 @@ class MainController extends Controller
                     ->select(DB::raw('COALESCE(SUM(order_items.quantity), 0)'));
             }])
                 ->orderByDesc('total_sold');
+        }elseif ($sort === 'limited') {
+            $query->whereHas('variants', function ($query) {
+            $query->where('stock', '<=', 5);
+        });
         }
 
         $products = $query->orderBy('created_at', 'desc')->paginate($limit);
@@ -101,7 +105,7 @@ class MainController extends Controller
     }
     function Banner()
     {
-        $banner = Banner::all();
+        $banner = Banner::paginate(9);
         if (!$banner) {
             return $this->apiError('Main banner not found');
         }
