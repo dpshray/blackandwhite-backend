@@ -70,7 +70,7 @@ Route::controller(WishlistController::class)->group(function () {
 //order
 Route::controller(OrderController::class)->group(function () {
     Route::get('/order-history', 'history_of_order')->middleware('auth:sanctum');
-    Route::post('/order-item', 'add_order')->middleware('auth:sanctum');
+    Route::post('/order-item/{id}', 'add_order')->middleware('auth:sanctum');
     Route::post('/order-edit/{order}', 'order_edit')->middleware('auth:sanctum');
 });
 

@@ -18,14 +18,14 @@ class BillingInformationController extends Controller
     {
         $user = Auth::user();
         $address = BillingInformation::create([
-            'user_id'=>$user->id,
-            'first_name'=>$request->first_name,
-            'last_name'=>$request->last_name,
-            'email'=>$request->email,
-            'state'=>$request->state,
-            'city'=>$request->city,
-            'address'=>$request->address,
-            'contact_number'=>$request->contact_number,
+            'user_id' => $user->id,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'state' => $request->state,
+            'city' => $request->city,
+            'address' => $request->address,
+            'contact_number' => $request->contact_number,
         ]);
 
         if (!$address) {
@@ -33,10 +33,10 @@ class BillingInformationController extends Controller
         }
         return $this->apiSuccess('your information has been save successfull', $address);
     }
-    function update(InformationRequest $request,BillingInformation $billing)
+    function update(InformationRequest $request, BillingInformation $billing)
     {
         $user = Auth::user();
-        $address=$billing->update($request->validated());
+        $address = $billing->update($request->validated());
         if (!$address) {
             return $this->apiError('Failed to update information');
         }
@@ -45,7 +45,7 @@ class BillingInformationController extends Controller
     function delete(BillingInformation $billing)
     {
         $user = Auth::user();
-        if($billing->user_id!=$user->id){
+        if ($billing->user_id != $user->id) {
             return $this->apiError('not your information');
         }
         $billing->delete();

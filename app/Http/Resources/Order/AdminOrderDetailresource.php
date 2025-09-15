@@ -22,21 +22,21 @@ class AdminOrderDetailresource extends JsonResource
             'created_at'   => $this->created_at->format('Y-m-d H:i:s'),
 
             'user' => [
-                'id'      => $this->user->id,
-                'name'    => $this->user->name,
-                'email'   => $this->user->email,
-                'addresses' => $this->user->addresses->map(function ($address) {
-                    return [
-                        'first_name' => $address->first_name,
-                        'last_name' => $address->last_name,
-                        'email' => $address->email,
-                        'state' => $address->state,
-                        'city' => $address->city,
-                        'address' => $address->address,
-                        'contact_number' => $address->contact_number,
-                    ];
-                }),
+                'id'    => $this->user->id,
+                'name'  => $this->user->name,
+                'email' => $this->user->email,
             ],
+
+            // 🔹 Only show the billing info linked to this order:
+            'billing_information' => $this->billingInformation ? [
+                'first_name'     => $this->billingInformation->first_name,
+                'last_name'      => $this->billingInformation->last_name,
+                'email'          => $this->billingInformation->email,
+                'state'          => $this->billingInformation->state,
+                'city'           => $this->billingInformation->city,
+                'address'        => $this->billingInformation->address,
+                'contact_number' => $this->billingInformation->contact_number,
+            ] : null,
 
             'items' => $this->items->map(function ($item) {
                 return [

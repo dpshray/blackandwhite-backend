@@ -17,7 +17,8 @@ class AdminOrderController extends Controller
         $orders = Order::with([
             'items.product',
             'items.variant',
-            'user.addresses' // load user's addresses
+            'user',
+            'billingInformation'
         ])
             ->orderBy('created_at', 'desc')
             ->paginate(9);
