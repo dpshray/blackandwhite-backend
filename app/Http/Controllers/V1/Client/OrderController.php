@@ -100,9 +100,9 @@ class OrderController extends Controller
     function order_edit(Request $request, Order $order)
     {
         $user = Auth::user();
-        $request->validate([
-            'status' => 'required|in:Cancelled'
-        ]);
+        // $request->validate([
+        //     'status' => 'required|in:Cancelled'
+        // ]);
         $update = $order->update([
             'status' => 'Cancelled'
         ]);

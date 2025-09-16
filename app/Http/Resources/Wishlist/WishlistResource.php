@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Wishlist;
 
+use App\Models\Product;
 use App\Models\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,7 +23,9 @@ class WishlistResource extends JsonResource
             // Product Info
             'product_id' => $this->product_id,
             'title' => $this->product->name,
-
+            'images' => $this->product->getMedia(Product::MEDIA_NAME)->map(function ($media) {
+                    return $media->getUrl();
+                }),
             // Variant Info
             'variant_id' => $this->variant_id,
             'variant' => [
@@ -31,9 +34,6 @@ class WishlistResource extends JsonResource
                 'price' => $this->variant->price ?? null,
                 'discount_price' => $this->variant->discount_price ?? null,
                 'stock' => $this->variant->stock ?? null,
-                'images' => $this->variant->getMedia(Variant::MEDIA_NAME)->map(function ($media) {
-                    return $media->getUrl();
-                }),
             ],
         ];
     }
