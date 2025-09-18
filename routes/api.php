@@ -85,6 +85,7 @@ Route::controller(ProfileController::class)->group(function () {
 Route::controller(ContactController::class)->group(function(){
     Route::get('/view-contact','view');
     Route::post('/store-contact','store');
+    Route::delete('/delete-contact/{contact}','delete');
 });
 
 //Admin section

@@ -33,4 +33,9 @@ class ContactController extends Controller
         $contact=new ContactCollection($contact);
         return $this->apiSuccess('contact data',$contact);
     }
+    function delete(Contact $contact)
+    {
+        $contact->delete();
+        return $this->apiSuccess('Deleted Successfull');
+    }
 }
