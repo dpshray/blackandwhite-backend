@@ -9,6 +9,7 @@ use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Client\BillingInformationController;
 use App\Http\Controllers\V1\Client\CartController;
+use App\Http\Controllers\V1\Client\ContactController;
 use App\Http\Controllers\V1\Client\MainController;
 use App\Http\Controllers\V1\Client\OrderController;
 use App\Http\Controllers\V1\Client\ProfileController;
@@ -78,6 +79,12 @@ Route::controller(OrderController::class)->group(function () {
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'view_profile')->middleware('auth:sanctum');
     Route::post('/update-profile', 'edit_profile')->middleware('auth:sanctum');
+});
+
+//contact
+Route::controller(ContactController::class)->group(function(){
+    Route::get('/view-contact','view');
+    Route::post('/store-contact','store');
 });
 
 //Admin section
