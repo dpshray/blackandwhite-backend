@@ -20,4 +20,8 @@ class Wishlist extends Model
     {
         return $this->belongsTo(Variant::class);
     }
+    public function categories()
+    {
+        return $this->belongsTo(Categories::class,'product_categories');
+    }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\Admin\DashboardController;
 use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Auth\GoogleAuthController;
 use App\Http\Controllers\V1\Client\BillingInformationController;
 use App\Http\Controllers\V1\Client\CartController;
 use App\Http\Controllers\V1\Client\ContactController;
@@ -34,6 +35,12 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/forget-password', 'forget_password');
     //reset password
     Route::post('/reset-password', 'reset_password');
+});
+
+//google login
+Route::controller(GoogleAuthController::class)->group(function () {
+    Route::get('/auth/google/redirect','redirect');
+    Route::get('/auth/google/callback','callback');
 });
 
 //client
@@ -126,3 +133,4 @@ Route::prefix('admin')->group(function () {
         });
     });
 });
+

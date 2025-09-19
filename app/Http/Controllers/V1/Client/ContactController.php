@@ -23,9 +23,10 @@ class ContactController extends Controller
         }
         return $this->apiSuccess('Contact Successful',$contact);
     }
-    function view()
+    function view(Request $request)
     {
-        $contact = Contact::orderBy('created_at', 'desc')->paginate(9);
+        $limit = $request->input('limit', 9);
+        $contact = Contact::orderBy('created_at', 'desc')->paginate($limit);
         if(!$contact)
         {
             return $this->apiError('No Contact found');

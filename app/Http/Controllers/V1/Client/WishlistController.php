@@ -64,7 +64,7 @@ class WishlistController extends Controller
     function view_favorites()
     {
         $user = Auth::user();
-        $favorites = Wishlist::with('product', 'variant')->where('user_id', $user->id)->get();
+        $favorites = Wishlist::with('product', 'variant','categories')->where('user_id', $user->id)->get();
         // $totalfavorites = Favorites::where('user_id', $user->id)->count();
         if (!$favorites) {
             return $this->apiError('favorites not found ');
