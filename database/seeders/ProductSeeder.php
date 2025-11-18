@@ -43,7 +43,7 @@ class ProductSeeder extends Seeder
             ]);
 
             // Add product image
-            $product->addMedia(storage_path('app/public/test.jpg'))
+            $product->addMedia(public_path('image/test.jpg'))
                 ->preservingOriginal()
                 ->toMediaCollection(Product::MEDIA_NAME);
 
@@ -62,7 +62,7 @@ class ProductSeeder extends Seeder
                 ]);
 
                 // Add variant image
-                $variant->addMedia(storage_path('app/public/test.jpg'))
+                $variant->addMedia(public_path('image/test.jpg'))
                     ->preservingOriginal()
                     ->toMediaCollection(Variant::MEDIA_NAME);
             }
