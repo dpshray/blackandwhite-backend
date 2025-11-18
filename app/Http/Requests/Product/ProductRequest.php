@@ -23,13 +23,13 @@ class ProductRequest extends FormRequest
     {
         return [
             //product
-            'name' => 'required|string|max:30',
-            'description' => 'required|string|max:250',
+            'name' => 'required|string|max:2500',
+            'description' => 'required|string|max:2500',
             'price' => 'required|numeric|min:0',
             'discount_price' => 'nullable|numeric|min:0|lt:price',
-            'pattern'=>'required|string|max:20',
-            'fabric' => 'required|string|max:20',
-            'material'=>'required|string|max:20',
+            'pattern'=>'required|string|max:250',
+            'fabric' => 'required|string|max:250',
+            'material'=>'required|string|max:250',
 
             // Category
             'categories' => 'required|exists:categories,id',
