@@ -33,9 +33,9 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'price' => $request->price,
                 'discount_price' => $request->discount_price ?? null,
-                'pattern'=>$request->pattern,
-                'fabric'=>$request->fabric,
-                'material'=>$request->material,
+                'pattern' => $request->pattern,
+                'fabric' => $request->fabric,
+                'material' => $request->material,
 
             ]);
 
@@ -83,26 +83,25 @@ class ProductController extends Controller
         }
     }
 
-    function update_product(UpdateProductRequest $request, Product $product)
+    public function update_product(UpdateProductRequest $request, Product $product)
     {
         DB::beginTransaction();
 
         try {
-            //Update product fields
             $product->update([
-                'name' => $request->name,
-                'slug' => Str::slug($request->name) . '-' . strtolower(Str::random(10)),
+                'name'        => $request->name,
+                'slug'        => Str::slug($request->name) . '-' . strtolower(Str::random(10)),
                 'description' => $request->description,
-                'price' => $request->price,
+                'price'       => $request->price,
                 'discount_price' => $request->discount_price ?? null,
-                'pattern'=>$request->pattern,
-                'fabric'=>$request->fabric,
-                'material'=>$request->material,
+                'pattern'     => $request->pattern,
+                'fabric'      => $request->fabric,
+                'material'    => $request->material,
             ]);
 
-            //Update product images
             if ($request->hasFile('images')) {
-                //clear old images first
+
+                // Delete only if new images exist
                 $product->clearMediaCollection(Product::MEDIA_NAME);
 
                 foreach ($request->file('images') as $image) {
@@ -110,28 +109,37 @@ class ProductController extends Controller
                 }
             }
 
-            //Sync categories
             $product->categories()->sync($request->categories);
 
-            //Handle variants
-            $existingVariantIds = $product->variants()->pluck('id')->toArray();
+            $existingVariantIds  = $product->variants()->pluck('id')->toArray();
             $incomingVariantIds = [];
 
-            foreach ($request->variant as $variantData) {
+            foreach ($request->variant as $index => $variantData) {
+
+                // ------------------------ UPDATE EXISTING VARIANT ------------------------
                 if (isset($variantData['id'])) {
-                    // Update existing variant
+
                     $variant = Variant::find($variantData['id']);
+
                     if ($variant && $variant->product_id === $product->id) {
+
+                        // Update fields
                         $variant->update([
-                            'size' => $variantData['size'],
-                            'color' => $variantData['color'],
-                            'price' => $variantData['price'],
+                            'size'   => $variantData['size'],
+                            'color'  => $variantData['color'],
+                            'price'  => $variantData['price'],
                             'discount_price' => $variantData['discount_price'] ?? null,
-                            'stock' => $variantData['stock'],
+                            'stock'  => $variantData['stock'],
                         ]);
-                        if (!empty($variantData['images'])) {
+
+                        // Only replace images if new files exist
+                        if ($request->hasFile("variant.$index.images")) {
+
+                            // Remove old images
                             $variant->clearMediaCollection(Variant::MEDIA_NAME);
-                            foreach ($variantData['images'] as $image) {
+
+                            // Add new images
+                            foreach ($request->file("variant.$index.images") as $image) {
                                 $variant->addMedia($image)->toMediaCollection(Variant::MEDIA_NAME);
                             }
                         }
@@ -139,18 +147,20 @@ class ProductController extends Controller
                         $incomingVariantIds[] = $variant->id;
                     }
                 } else {
-                    // Create new variant
+                    // ------------------------ CREATE NEW VARIANT ------------------------
+
                     $newVariant = Variant::create([
                         'product_id' => $product->id,
-                        'size' => $variantData['size'],
-                        'color' => $variantData['color'],
-                        'price' => $variantData['price'],
+                        'size'       => $variantData['size'],
+                        'color'      => $variantData['color'],
+                        'price'      => $variantData['price'],
                         'discount_price' => $variantData['discount_price'] ?? null,
-                        'stock' => $variantData['stock'],
+                        'stock'      => $variantData['stock'],
                     ]);
 
-                    if (isset($variantData['images'])) {
-                        foreach ($variantData['images'] as $image) {
+                    // Add images only if uploaded
+                    if ($request->hasFile("variant.$index.images")) {
+                        foreach ($request->file("variant.$index.images") as $image) {
                             $newVariant->addMedia($image)->toMediaCollection(Variant::MEDIA_NAME);
                         }
                     }
@@ -159,11 +169,11 @@ class ProductController extends Controller
                 }
             }
 
-            //Delete removed variants
             $variantsToDelete = array_diff($existingVariantIds, $incomingVariantIds);
             Variant::destroy($variantsToDelete);
 
             DB::commit();
+
             return $this->apiSuccess("Product updated successfully", $product->load('variants', 'categories'));
         } catch (Exception $e) {
             DB::rollBack();
@@ -171,36 +181,36 @@ class ProductController extends Controller
         }
     }
 
+
     public function delete_product(Product $product)
     {
         DB::beginTransaction();
 
-    try {
-        $product->delete();
+        try {
+            $product->delete();
 
-        DB::commit();
+            DB::commit();
 
-        return $this->apiSuccess("Product moved to trash successfully.");
-    } catch (Exception $e) {
-        DB::rollBack();
-        return $this->apiError("Failed to delete product: " . $e->getMessage());
-    }
+            return $this->apiSuccess("Product moved to trash successfully.");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->apiError("Failed to delete product: " . $e->getMessage());
+        }
     }
     public function restore_product($id)
     {
         DB::beginTransaction();
 
-    try {
-        $product = Product::withTrashed()->findOrFail($id);
-        $product->restore();
+        try {
+            $product = Product::withTrashed()->findOrFail($id);
+            $product->restore();
 
-        DB::commit();
+            DB::commit();
 
-        return $this->apiSuccess("Product has been restore successfully.");
-    } catch (Exception $e) {
-        DB::rollBack();
-        return $this->apiError("Failed to restore product: " . $e->getMessage());
+            return $this->apiSuccess("Product has been restore successfully.");
+        } catch (Exception $e) {
+            DB::rollBack();
+            return $this->apiError("Failed to restore product: " . $e->getMessage());
+        }
     }
-    }
-
 }

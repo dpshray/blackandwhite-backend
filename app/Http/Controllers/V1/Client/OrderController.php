@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Order\OrderResource;
 use App\Models\Cart;
+use App\Models\CheckoutSession;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -15,61 +16,110 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+use function Symfony\Component\Clock\now;
+
 class OrderController extends Controller
 {
     //
     use ResponseTrait;
-    public function add_order($id)
+    public function add_order(Request $request, $id)
     {
-        $lineTotal = 0;
-        $subtotal = 0;
-        $delivery_fee = 200;
         $user = Auth::user();
-        $cart = cart::where('user_id', $user->id);
+        $delivery_fee = 200;
+        $subtotal = 0;
+
         try {
             DB::beginTransaction();
-            $order = Order::create([
-                'user_id'      => $user->id,
-                'total_amount' => 0, // will update later
-                'status'       => 'Pending',
-                'billing_information_id'=>$id,
-            ]);
 
-            foreach ($cart->get() as $item) {
-                if ($item->variant_id) {
-                    $variant = Variant::find($item->variant_id);
-                    if (!$variant) {
-                        throw new Exception("Variant not found.");
+            if ($request->buynow == 0) {
+
+                $cartItems = cart::where('user_id', $user->id)->get();
+
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'total_amount' => 0,
+                    'status' => 'Pending',
+                    'billing_information_id' => $id,
+                ]);
+
+                foreach ($cartItems as $item) {
+
+                    if ($item->variant_id) {
+                        $variant = Variant::findOrFail($item->variant_id);
+                        $price = $variant->discount_price ?? $variant->price;
+                    } else {
+                        $product = Product::findOrFail($item->product_id);
+                        $price = $product->discount_price ?? $product->price;
                     }
+
+                    $lineTotal = $price * $item->quantity;
+                    $subtotal += $lineTotal;
+
+                    $order->orderItems()->create([
+                        'product_id' => $item->product_id,
+                        'variant_id' => $item->variant_id,
+                        'quantity' => $item->quantity,
+                        'total_amount' => $lineTotal,
+                    ]);
+                }
+
+                $order->update([
+                    'total_amount' => $subtotal + $delivery_fee,
+                ]);
+
+                // delete cart only in cart mode
+                cart::where('user_id', $user->id)->delete();
+            }
+
+            // BUY NOW
+            else if ($request->buynow == 1) {
+
+                $checkout = CheckoutSession::where('user_id', $user->id)
+                    ->latest('id')
+                    ->first();
+
+                if (!$checkout) {
+                    throw new Exception("Checkout session not found.");
+                }
+
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'total_amount' => 0,
+                    'status' => 'Pending',
+                    'billing_information_id' => $id,
+                ]);
+
+                if ($checkout->variant_id) {
+                    $variant = Variant::findOrFail($checkout->variant_id);
                     $price = $variant->discount_price ?? $variant->price;
                 } else {
-                    $product = Product::find($item->product_id);
-                    if (!$product) {
-                        throw new Exception("Product not found.");
-                    }
+                    $product = Product::findOrFail($checkout->product_id);
                     $price = $product->discount_price ?? $product->price;
                 }
-                $lineTotal = $price * $item->quantity;
+
+                $lineTotal = $price * $checkout->quantity;
                 $subtotal += $lineTotal;
+
                 $order->orderItems()->create([
-                    'product_id' => $item->product_id,
-                    'variant_id' => $item->variant_id,
-                    'quantity'   => $item->quantity,
-                    'total_amount' => $lineTotal, // unit price
+                    'product_id' => $checkout->product_id,
+                    'variant_id' => $checkout->variant_id,
+                    'quantity' => $checkout->quantity,
+                    'total_amount' => $lineTotal,
                 ]);
-                $total = $subtotal + $delivery_fee;
+
                 $order->update([
-                    'total_amount' => $total,
+                    'total_amount' => $subtotal + $delivery_fee,
                 ]);
-                DB::commit();
             }
+
+            DB::commit();
+            return $this->apiSuccess("Checkout successful. Your order has been placed.");
         } catch (Exception $e) {
             DB::rollBack();
             return $this->apiError("Checkout failed: " . $e->getMessage());
         }
-        $cart->delete();
-        return $this->apiSuccess("checkout successfull your order has been placed");
     }
+
 
     function history_of_order()
     {
@@ -113,43 +163,20 @@ class OrderController extends Controller
     }
     public function buyNow(Request $request)
     {
-        $delivery_fee = 200;
-        $subtotal = 0;
         $user = Auth::user();
-
+        // return $request->all();
         try {
             DB::beginTransaction();
-
-            $order = Order::create([
-                'user_id'      => $user->id,
-                'total_amount' => 0,
-                'status'       => 'Pending',
+            $checkout = CheckoutSession::create([
+                'user_id' => $user->id,
+                'product_id' => $request->product_id,
+                'variant_id' => $request->variant_id,
+                'quantity' => $request->quantity,
+                // 'expires_at' => now()->addMinutes(30),
             ]);
-
-            $product = Product::findOrFail($request->product_id);
-            $variant = $request->variant_id ? Variant::findOrFail($request->variant_id) : null;
-
-            $price = $variant ? ($variant->discount_price ?? $variant->price)
-                : ($product->discount_price ?? $product->price);
-
-            $qty = $request->quantity ?? 1;
-            $lineTotal = $price * $qty;
-            $subtotal += $lineTotal;
-
-            $order->orderItems()->create([
-                'product_id'   => $product->id,
-                'variant_id'   => $variant->id ?? null,
-                'quantity'     => $qty,
-                'total_amount' => $lineTotal,
-            ]);
-
-            $order->update([
-                'total_amount' => $subtotal + $delivery_fee,
-            ]);
-
+            // return ($checkout);
             DB::commit();
-
-            return $this->apiSuccess("Buy Now checkout successful!", $order->load('orderItems'));
+            return $this->apiSuccess("Buy Now checkout successful!", $checkout);
         } catch (Exception $e) {
             DB::rollBack();
             return $this->apiError("Buy Now failed: " . $e->getMessage());

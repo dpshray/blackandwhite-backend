@@ -36,7 +36,7 @@ class UpdateProductRequest extends FormRequest
 
             // Product images
             'images' => 'sometimes|required|array|min:1',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg',
+            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg',
 
             // Variants
             'variant' => 'required|array|min:1',
@@ -46,7 +46,7 @@ class UpdateProductRequest extends FormRequest
             'variant.*.discount_price' => 'nullable|numeric|min:0|lt:variant.*.price',
             'variant.*.stock' => 'required|integer|min:0',
             'variant.*.images' => 'sometimes|required|array|min:1',
-            'variant.*.images.*' => 'required|image|mimes:jpeg,png,jpg',
+            'variant.*.images.*' => 'sometimes|image|mimes:jpeg,png,jpg',
         ];
     }
 }
