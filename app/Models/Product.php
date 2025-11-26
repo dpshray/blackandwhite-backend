@@ -15,6 +15,8 @@ class Product extends Model implements HasMedia
     use InteractsWithMedia, HasEvents;
     use SoftDeletes;
     const MEDIA_NAME = 'product';
+    const SIZE_DETAIL = 'SIZE_DETAIL';
+
     protected $casts = [
         'price'=> 'integer',
         'discount_price'=> 'integer',
@@ -53,6 +55,7 @@ class Product extends Model implements HasMedia
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });
+            $this->addMediaCollection(self::SIZE_DETAIL)->singleFile();
     }
     public function getDiscountPercentAttribute()
     {

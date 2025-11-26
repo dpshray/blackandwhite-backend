@@ -51,7 +51,10 @@ class ProductController extends Controller
                     $product->addMedia($image)->toMediaCollection(Product::MEDIA_NAME);
                 }
             }
-
+            // SIZE_DETAIL image to product
+            if ($request->hasFile('size_detail')) {
+                $product->addMedia($request->size_detail)->toMediaCollection(Product::SIZE_DETAIL);
+            }
             // Create variants and attach images
             foreach ($request->variant as $index => $var) {
                 $variant = Variant::create([
@@ -109,6 +112,10 @@ class ProductController extends Controller
                 }
             }
 
+            if ($request->hasFile('size_detail')) {
+                $product->clearMediaCollection(Product::SIZE_DETAIL);
+                $product->addMedia($request->size_detail)->toMediaCollection(Product::SIZE_DETAIL);
+            }
             $product->categories()->sync($request->categories);
 
             $existingVariantIds  = $product->variants()->pluck('id')->toArray();

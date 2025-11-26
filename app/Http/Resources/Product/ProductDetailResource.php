@@ -29,6 +29,7 @@ class ProductDetailResource extends JsonResource
             'fabric' => $this->fabric,
             'material' => $this->material,
             // 'image' => $this->getFirstMediaUrl('product', 'image') ?: null,
+            'size_detail'=>$this->getFirstMediaUrl(Product::SIZE_DETAIL),
             'image' => $this->getMedia(Product::MEDIA_NAME)->map(function ($media) {
                 return $media->getUrl();
             }),

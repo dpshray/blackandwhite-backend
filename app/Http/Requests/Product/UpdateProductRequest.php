@@ -30,6 +30,7 @@ class UpdateProductRequest extends FormRequest
             'pattern' => 'required|string|max:250',
             'fabric' => 'required|string|max:250',
             'material' => 'required|string|max:250',
+            'Size_detail'=>'sometimes|file|mimes:png,jpg',
 
             // Category
             'categories' => 'required',
