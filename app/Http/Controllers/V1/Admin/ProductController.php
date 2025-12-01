@@ -118,7 +118,7 @@ class ProductController extends Controller
 
             // Only process variants if variant data is provided
             if ($request->has('variant') && !empty($request->variant)) {
-                $existingVariantIds  = $product->variants()->pluck('id')->toArray();
+                $existingVariantIds  = $product->variants->pluck('id')->toArray();
                 $incomingVariantIds = [];
 
                 foreach ($request->variant as $index => $variantData) {
