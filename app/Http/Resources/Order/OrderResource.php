@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,7 +29,8 @@ class OrderResource extends JsonResource
                     'discount_price' => $item->product->discount_price ??null,
                     'price'=>$item->product->price,
                     'discount_percent'=>$item->product->discount_percent,
-                    'image' => $item->product?->getFirstMediaUrl('product') ?? null,
+                    'image' => $item->product?->getFirstMediaUrl(Product::MAIN_IMAGE) ?? null,
+
                 ];
             }),
         ];

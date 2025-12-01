@@ -33,6 +33,7 @@ class ProductResource extends JsonResource
             'image' => $this->getMedia(Product::MEDIA_NAME)->map(function ($media) {
                 return $media->getUrl();
             }),
+            'main_image'=>$this->getFirstMediaUrl(Product::MAIN_IMAGE),
             'categories' => $this->categories->map(function ($category) {
                 return [
                     'categories_id' => $category->id,

@@ -33,7 +33,7 @@ class ProductRequest extends FormRequest
             'size_detail'=>'required|file|mimes:png,jpg',
             // Category
             'categories' => 'required|exists:categories,id',
-
+            'main_image' => 'required|file|mimes:png,jpg',
             // Product images
             'images' => 'required|array|min:1',
             'images.*' => 'required|image|mimes:jpeg,png,jpg',

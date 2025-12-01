@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,11 +42,11 @@ class AdminOrderDetailresource extends JsonResource
             'items' => $this->items->map(function ($item) {
                 return [
                     'product_name'  => $item->product->name,
+                    'main_image'    => $item->product->getFirstMediaUrl(Product::MAIN_IMAGE),
                     'variant_size'  => $item->variant->size ?? null,
                     'variant_color' => $item->variant->color ?? null,
                     'quantity'      => $item->quantity,
                     'price'         => $item->total_amount,
-                    'image'         => $item->variant->getFirstMediaUrl('variant'),
                 ];
             }),
         ];

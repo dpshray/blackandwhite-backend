@@ -30,6 +30,7 @@ class WishlistResource extends JsonResource
             'images' => $this->product->getMedia(Product::MEDIA_NAME)->map(function ($media) {
                 return $media->getUrl();
             }),
+            'main_image'=>$this->product->getFirstMediaUrl(Product::MAIN_IMAGE),
             //category
             'categories' => $this->product->categories->map(function ($cat) {
                 return [

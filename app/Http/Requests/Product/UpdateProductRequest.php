@@ -39,6 +39,7 @@ class UpdateProductRequest extends FormRequest
             'images' => 'sometimes|required|array|min:1',
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg',
 
+            'main_image' => 'sometimes|file|mimes:png,jpg',
             // Variants
             'variant' => 'required|array|min:1',
             'variant.*.id' => 'sometimes|nullable|exists:variants,id',

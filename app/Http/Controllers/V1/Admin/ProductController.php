@@ -51,9 +51,10 @@ class ProductController extends Controller
                     $product->addMedia($image)->toMediaCollection(Product::MEDIA_NAME);
                 }
             }
-            // SIZE_DETAIL image to product
-            if ($request->hasFile('size_detail')) {
-                $product->addMedia($request->size_detail)->toMediaCollection(Product::SIZE_DETAIL);
+
+            // MAIN_IMAGE image to product
+            if ($request->hasFile('main_image')) {
+                $product->addMedia($request->main_image)->toMediaCollection(Product::MAIN_IMAGE);
             }
             // Create variants and attach images
             foreach ($request->variant as $index => $var) {
@@ -103,7 +104,12 @@ class ProductController extends Controller
                     $product->addMedia($image)->toMediaCollection(Product::MEDIA_NAME);
                 }
             }
-
+            // MAIN_IMAGE image to product
+            if ($request->hasFile('main_image')) {
+                $product->clearMediaCollection(Product::MAIN_IMAGE);
+                $product->addMedia($request->main_image)->toMediaCollection(Product::MAIN_IMAGE);
+            }
+            // SIZE_DETAIL image to product
             if ($request->hasFile('size_detail')) {
                 $product->clearMediaCollection(Product::SIZE_DETAIL);
                 $product->addMedia($request->size_detail)->toMediaCollection(Product::SIZE_DETAIL);
@@ -145,7 +151,7 @@ class ProductController extends Controller
                         $incomingVariantIds[] = $newVariant->id;
                     }
                 }
-
+                // Delete variants that are not in the incoming request
                 $variantsToDelete = array_diff($existingVariantIds, $incomingVariantIds);
                  if (!empty($variantsToDelete)) {
                     Variant::destroy($variantsToDelete);

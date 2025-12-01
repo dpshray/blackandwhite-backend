@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Cart;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +26,8 @@ class CartResource extends JsonResource
                 'title' => $this->product->name ?? null,
                 'price' => $this->product->price,
                 'discount_price' => $this->product->discount_price,
-                'image'=> $this->product->getFirstMediaUrl('product', 'image') ?: null,
+                'image'=> $this->product->getFirstMediaUrl(Product::MAIN_IMAGE) ?: null,
+                // 'main_image'=>$this->product->getFirstMediaUrl(Product::MAIN_IMAGE),
                 'variant' => $this->when($this->variant, function () {
                     return [
                         'id'=> $this->variant->id,
