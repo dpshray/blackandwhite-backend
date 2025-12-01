@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('billing_information_id')
                 ->references('id')
                 ->on('billing_information')
-                ->onDelete('cascade')
+                ->onDelete('set null')
                 ->onUpdate('cascade');
         });
     }

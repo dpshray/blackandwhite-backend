@@ -24,6 +24,9 @@ class WishlistResource extends JsonResource
             'product_id' => $this->product_id,
             'title' => $this->product->name,
             'slug' => $this->product->slug,
+            'price' => $this->product->price,
+            'discount_price' => $this->product->discount_price,
+            'discount_percent' => $this->product->discount_percent,
             'images' => $this->product->getMedia(Product::MEDIA_NAME)->map(function ($media) {
                 return $media->getUrl();
             }),
@@ -40,9 +43,6 @@ class WishlistResource extends JsonResource
             'variant' => [
                 'size' => $this->variant->size ?? null,
                 'color' => $this->variant->color ?? null,
-                'price' => $this->variant->price ?? null,
-                'discount_price' => $this->variant->discount_price ?? null,
-                'discount_percent' => $this->variant->discount_percent,
                 'stock' => $this->variant->stock ?? null,
             ],
         ];

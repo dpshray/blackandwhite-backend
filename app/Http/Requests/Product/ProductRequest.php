@@ -29,7 +29,7 @@ class ProductRequest extends FormRequest
             'discount_price' => 'nullable|numeric|min:0|lt:price',
             'pattern'=>'required|string|max:250',
             'fabric' => 'required|string|max:250',
-            'material'=>'required|string|max:250',
+            'material'=>'required|string',
             'size_detail'=>'required|file|mimes:png,jpg',
             // Category
             'categories' => 'required|exists:categories,id',
@@ -42,11 +42,7 @@ class ProductRequest extends FormRequest
             'variant' => 'required|array|min:1',
             'variant.*.size' => 'required|string|max:10',
             'variant.*.color' => 'required',
-            'variant.*.price' => 'required|numeric|min:0',
-            'variant.*.discount_price' => 'nullable|numeric|min:0|lt:variant.*.price',
             'variant.*.stock' => 'required|integer|min:0',
-            'variant.*.images' => 'required|array|min:1',
-            'variant.*.images.*' => 'required|image|mimes:jpeg,png,jpg',
         ];
     }
 }

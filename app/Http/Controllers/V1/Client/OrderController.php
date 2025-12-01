@@ -43,15 +43,8 @@ class OrderController extends Controller
                 ]);
 
                 foreach ($cartItems as $item) {
-
-                    if ($item->variant_id) {
-                        $variant = Variant::findOrFail($item->variant_id);
-                        $price = $variant->discount_price ?? $variant->price;
-                    } else {
-                        $product = Product::findOrFail($item->product_id);
-                        $price = $product->discount_price ?? $product->price;
-                    }
-
+                    $product = Product::findOrFail($item->product_id);
+                    $price = $product->discount_price ?? $product->price;
                     $lineTotal = $price * $item->quantity;
                     $subtotal += $lineTotal;
 
@@ -89,13 +82,9 @@ class OrderController extends Controller
                     'billing_information_id' => $id,
                 ]);
 
-                if ($checkout->variant_id) {
-                    $variant = Variant::findOrFail($checkout->variant_id);
-                    $price = $variant->discount_price ?? $variant->price;
-                } else {
-                    $product = Product::findOrFail($checkout->product_id);
-                    $price = $product->discount_price ?? $product->price;
-                }
+
+                $product = Product::findOrFail($checkout->product_id);
+                $price = $product->discount_price ?? $product->price;
 
                 $lineTotal = $price * $checkout->quantity;
                 $subtotal += $lineTotal;
@@ -121,13 +110,14 @@ class OrderController extends Controller
     }
 
 
-    function history_of_order()
+    function history_of_order(Request $request)
     {
+        $limit = $request->input('limit', 9);
         $user = Auth::user();
         $orders = Order::with(['items.product', 'items.variant'])
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc') // newest first
-            ->paginate(10);
+            ->paginate($limit);
         if (!$orders) {
             return $this->apiError('No order was found');
         }

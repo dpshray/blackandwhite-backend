@@ -21,6 +21,7 @@ class ProductDetailResource extends JsonResource
             'id' => $this->id,
             'title' => $this->name,
             'slug' => $this->slug,
+            'product_code'=>$this->product_code,
             'description' => $this->description,
             'price' => $this->price,
             'discount_price' => $this->discount_price,
@@ -45,13 +46,7 @@ class ProductDetailResource extends JsonResource
                     'id' => $variant->id,
                     'size' => $variant->size,
                     'color' => $variant->color,
-                    'price' => $variant->price,
-                    'discount_price' => $variant->discount_price,
-                    'discount_percent' => $variant->discount_percent,
                     'stock' => $variant->stock,
-                    'images' => $variant->getMedia(Variant::MEDIA_NAME)->map(function ($media) {
-                        return $media->getUrl();
-                    }),
                 ];
             }),
         ];

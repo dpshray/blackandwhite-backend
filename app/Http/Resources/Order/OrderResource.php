@@ -25,7 +25,9 @@ class OrderResource extends JsonResource
                     'variant_size' => $item->variant->size ?? null,
                     'variant_color' => $item->variant->color ?? null,
                     'quantity' => $item->quantity,
-                    'price' => $item->variant->discount_price ?? $item->variant->price,
+                    'discount_price' => $item->product->discount_price ??null,
+                    'price'=>$item->product->price,
+                    'discount_percent'=>$item->product->discount_percent,
                     'image' => $item->product?->getFirstMediaUrl('product') ?? null,
                 ];
             }),

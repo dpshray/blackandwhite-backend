@@ -28,8 +28,8 @@ class CartController extends Controller
             return $this->apiError('cart not found .Add product on cart');
         }
         foreach ($cart as $item) {
-            $originalPrice = $item->variant->price;
-            $sellingPrice = $item->variant->discount_price ?? $originalPrice;
+            $originalPrice = $item->product->price;
+            $sellingPrice = $item->product->discount_price ?? $originalPrice;
             $subtotal += $sellingPrice * $item->quantity;
         }
         $total = $subtotal + $delivery_charge;

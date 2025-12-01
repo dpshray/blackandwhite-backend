@@ -61,20 +61,12 @@ class ProductController extends Controller
                     'product_id' => $product->id,
                     'size' => $var['size'],
                     'color' => $var['color'],
-                    'price' => $var['price'],
-                    'discount_price' => $var['discount_price'] ?? null,
                     'stock' => $var['stock'],
                 ]);
 
                 if (!$variant) {
                     DB::rollBack();
                     return $this->apiError("Failed to add variant");
-                }
-
-                if ($request->hasFile("variant.$index.images")) {
-                    foreach ($request->file("variant.$index.images") as $image) {
-                        $variant->addMedia($image)->toMediaCollection(Variant::MEDIA_NAME);
-                    }
                 }
             }
 
@@ -134,23 +126,8 @@ class ProductController extends Controller
                         $variant->update([
                             'size'   => $variantData['size'],
                             'color'  => $variantData['color'],
-                            'price'  => $variantData['price'],
-                            'discount_price' => $variantData['discount_price'] ?? null,
                             'stock'  => $variantData['stock'],
                         ]);
-
-                        // Only replace images if new files exist
-                        if ($request->hasFile("variant.$index.images")) {
-
-                            // Remove old images
-                            $variant->clearMediaCollection(Variant::MEDIA_NAME);
-
-                            // Add new images
-                            foreach ($request->file("variant.$index.images") as $image) {
-                                $variant->addMedia($image)->toMediaCollection(Variant::MEDIA_NAME);
-                            }
-                        }
-
                         $incomingVariantIds[] = $variant->id;
                     }
                 } else {
@@ -160,24 +137,17 @@ class ProductController extends Controller
                         'product_id' => $product->id,
                         'size'       => $variantData['size'],
                         'color'      => $variantData['color'],
-                        'price'      => $variantData['price'],
-                        'discount_price' => $variantData['discount_price'] ?? null,
                         'stock'      => $variantData['stock'],
                     ]);
-
-                    // Add images only if uploaded
-                    if ($request->hasFile("variant.$index.images")) {
-                        foreach ($request->file("variant.$index.images") as $image) {
-                            $newVariant->addMedia($image)->toMediaCollection(Variant::MEDIA_NAME);
-                        }
-                    }
 
                     $incomingVariantIds[] = $newVariant->id;
                 }
             }
 
             $variantsToDelete = array_diff($existingVariantIds, $incomingVariantIds);
-            Variant::destroy($variantsToDelete);
+             if (!empty($variantsToDelete)) {
+                Variant::destroy($variantsToDelete);
+            }
 
             DB::commit();
 
@@ -187,7 +157,6 @@ class ProductController extends Controller
             return $this->apiError("Something went wrong: " . $e->getMessage());
         }
     }
-
 
     public function delete_product(Product $product)
     {

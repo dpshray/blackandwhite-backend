@@ -18,8 +18,8 @@ class Product extends Model implements HasMedia
     const SIZE_DETAIL = 'SIZE_DETAIL';
 
     protected $casts = [
-        'price'=> 'integer',
-        'discount_price'=> 'integer',
+        'price' => 'integer',
+        'discount_price' => 'integer',
     ];
     protected $fillable = [
         'name',
@@ -30,6 +30,7 @@ class Product extends Model implements HasMedia
         'pattern',
         'fabric',
         'material',
+        'product_code',
     ];
     public function categories()
     {
@@ -55,7 +56,7 @@ class Product extends Model implements HasMedia
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('image')->nonQueued();
             });
-            $this->addMediaCollection(self::SIZE_DETAIL)->singleFile();
+        $this->addMediaCollection(self::SIZE_DETAIL)->singleFile();
     }
     public function getDiscountPercentAttribute()
     {
@@ -63,5 +64,22 @@ class Product extends Model implements HasMedia
             return round((($this->price - $this->discount_price) / $this->price) * 100, 2);
         }
         return null;
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->product_code = self::generateUniqueCode();
+        });
+    }
+
+    public static function generateUniqueCode()
+    {
+        do {
+            // Generate a random 4-digit number
+            $code = str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        } while (self::where('product_code', $code)->exists());
+        return $code;
     }
 }

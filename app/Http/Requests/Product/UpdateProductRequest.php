@@ -29,7 +29,7 @@ class UpdateProductRequest extends FormRequest
             'discount_price' => 'nullable|numeric|min:0|lt:price',
             'pattern' => 'required|string|max:250',
             'fabric' => 'required|string|max:250',
-            'material' => 'required|string|max:250',
+            'material' => 'required|string',
             'Size_detail'=>'sometimes|file|mimes:png,jpg',
 
             // Category
@@ -43,11 +43,7 @@ class UpdateProductRequest extends FormRequest
             'variant' => 'required|array|min:1',
             'variant.*.size' => 'required|string|max:10',
             'variant.*.color' => 'required|string|max:20',
-            'variant.*.price' => 'required|numeric|min:0',
-            'variant.*.discount_price' => 'nullable|numeric|min:0|lt:variant.*.price',
             'variant.*.stock' => 'required|integer|min:0',
-            'variant.*.images' => 'sometimes|required|array|min:1',
-            'variant.*.images.*' => 'sometimes|image|mimes:jpeg,png,jpg',
         ];
     }
 }

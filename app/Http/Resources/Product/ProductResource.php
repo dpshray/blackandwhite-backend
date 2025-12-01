@@ -45,13 +45,7 @@ class ProductResource extends JsonResource
                     'id' => $variant->id,
                     'size' => $variant->size,
                     'color' => $variant->color,
-                    'price' => $variant->price,
-                    'discount_price' => $variant->discount_price,
-                    'discount_percent' => $variant->discount_percent,
                     'stock' => $variant->stock,
-                    'images' => $variant->getMedia(Variant::MEDIA_NAME)->map(function ($media) {
-                        return $media->getUrl();
-                    }),
                 ];
             }),
         ];

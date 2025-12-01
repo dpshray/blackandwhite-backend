@@ -56,15 +56,8 @@ class ProductSeeder extends Seeder
                     'product_id' => $product->id,
                     'size' => $faker->randomElement(['S', 'M', 'L', 'XL','XXL']),
                     'color' => $faker->randomElement(['white','black']),
-                    'price' => $faker->randomFloat(2, 100, 500),
-                    'discount_price' => $faker->optional()->randomFloat(2, 50, 400),
                     'stock' => $faker->numberBetween(1, 50),
                 ]);
-
-                // Add variant image
-                $variant->addMedia(public_path('image/test.jpg'))
-                    ->preservingOriginal()
-                    ->toMediaCollection(Variant::MEDIA_NAME);
             }
         }
     }

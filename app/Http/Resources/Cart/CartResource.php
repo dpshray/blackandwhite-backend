@@ -23,16 +23,15 @@ class CartResource extends JsonResource
             'product' => [
                 'id'    => $this->product->id ?? null,
                 'title' => $this->product->name ?? null,
-
+                'price' => $this->product->price,
+                'discount_price' => $this->product->discount_price,
+                'image'=> $this->product->getFirstMediaUrl('product', 'image') ?: null,
                 'variant' => $this->when($this->variant, function () {
                     return [
-                        'id'             => $this->variant->id,
-                        'size'           => $this->variant->size,
-                        'color'          => $this->variant->color,
-                        'image'          => $this->variant->getFirstMediaUrl('variant', 'image') ?: null,
-                        'price'          => $this->variant->price,
-                        'discount_price' => $this->variant->discount_price,
-                        'quantity'       => $this->variant->stock,
+                        'id'=> $this->variant->id,
+                        'size'=> $this->variant->size,
+                        'color'=> $this->variant->color,
+                        'quantity'=>$this->variant->stock,
                     ];
                 }, null), // if no variant, return null instead of error
             ],
