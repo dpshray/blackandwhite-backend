@@ -41,6 +41,7 @@ class UpdateProductRequest extends FormRequest
 
             // Variants
             'variant' => 'required|array|min:1',
+            'variant.*.id' => 'sometimes|nullable|exists:variants,id',
             'variant.*.size' => 'required|string|max:10',
             'variant.*.color' => 'required|string|max:20',
             'variant.*.stock' => 'required|integer|min:0',
