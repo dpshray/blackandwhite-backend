@@ -42,7 +42,7 @@ class GoogleAuthController extends Controller
                     'name' => $googleUser->getName(),
                     'email' => $email,
                     'email_verified_at' => now(),
-                    'mobile_number' => '984000000',
+                    // 'mobile_number' => '984000000',
                     'password' => Hash::make($randomPassword),
                     'is_admin' => 0,
                 ]);
@@ -57,10 +57,7 @@ class GoogleAuthController extends Controller
             $token = $user->createToken($user->email . '-AuthToken')->plainTextToken;
             $token = 'Bearer ' . $token;
 
-            return $this->apiSuccess('Welcome', [
-                'data' => new UserResource($user),
-                'token' => $token
-            ]);
+            return redirect()->away(env('FRONTEND_URL') . '/google-auth-success?token=' . $token . '&user=' . urlencode(json_encode($user)));
         } catch (\Exception $e) {
             Log::error($e);
             return $this->apiError('An error occurred.');
