@@ -8,6 +8,7 @@ use App\Models\User;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 
@@ -21,40 +22,47 @@ class GoogleAuthController extends Controller
     }
     public function handleGoogleCallback(Request $request)
     {
-        $request->validate(['token' => 'required|string']);
-
         try {
+
+            // Get user from Google
             $googleUser = Socialite::driver('google')
                 ->stateless()
-                ->userFromToken($request->token); // <-- use code from frontend
+                ->user();
 
             $email = $googleUser->getEmail();
-            $randomPassword = Str::random(12);
-            $user = User::firstOrCreate(
-                ['email' => $email],
-                [
+
+            // Check if user already exists
+            $user = User::where('email', $email)->first();
+
+            // If not exist, create new user
+            if (!$user) {
+                $randomPassword = Str::random(12);
+
+                $user = User::create([
                     'name' => $googleUser->getName(),
+                    'email' => $email,
                     'email_verified_at' => now(),
                     'mobile_number' => '984000000',
                     'password' => Hash::make($randomPassword),
                     'is_admin' => 0,
-                ]
-            );
+                ]);
 
-            if (!$user->profile) {
-                $user->profile()->create(['user_id' => $user->id]);
+                // Create profile for new user
+                $user->profile()->create([
+                    'user_id' => $user->id
+                ]);
             }
 
+            // Create Sanctum token
             $token = $user->createToken($user->email . '-AuthToken')->plainTextToken;
             $token = 'Bearer ' . $token;
 
-            $user = new UserResource($user);
             return $this->apiSuccess('Welcome', [
-                'data' => $user,
+                'data' => new UserResource($user),
                 'token' => $token
             ]);
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error($e);
+            Log::error($e);
             return $this->apiError('An error occurred.');
         }
     }

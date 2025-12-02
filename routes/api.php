@@ -40,7 +40,7 @@ Route::controller(AuthController::class)->group(function () {
 //google login
 Route::controller(GoogleAuthController::class)->group(function () {
     Route::get('/auth/google/redirect','redirect');
-    Route::get('/auth/google/callback','callback');
+    Route::get('/auth/google/callback','handleGoogleCallback');
 });
 
 //client
