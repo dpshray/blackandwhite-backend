@@ -23,8 +23,9 @@ class UpdateBannerRequest extends FormRequest
     {
         return [
             //
-            'title'    => 'required|string|max:30',
-            'subtitle' => 'sometimes|string|nullable',
+            'title' => 'sometimes|nullable|string',
+            'subtitle' => 'sometimes|nullable|string',
+            'url' => 'sometimes|nullable|string',
             'image'    => 'sometimes|file|mimes:png,jpg',
         ];
     }

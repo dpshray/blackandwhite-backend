@@ -60,17 +60,10 @@ class MainController extends Controller
             $query->orderBy('created_at', 'desc');
         } elseif ($sort === 'best_seller') {
             // Add total_sold column using relationship
-            $query->withCount(['variants as total_sold' => function ($q) {
-                $q->join('order_items', 'variants.id', '=', 'order_items.variant_id')
-                    ->join('orders', 'orders.id', '=', 'order_items.order_id')
-                    ->where('orders.status', 'completed') // optional filter
-                    ->select(DB::raw('COALESCE(SUM(order_items.quantity), 0)'));
-            }])
-                ->orderByDesc('total_sold');
-        }elseif ($sort === 'limited') {
-            $query->whereHas('variants', function ($query) {
-            $query->where('stock', '<=', 5);
-        });
+            $query->where('bestseller', true);
+        }elseif ($sort === 'limited')
+        {
+            $query->where('limited', true);
         }
 
         $products = $query->orderBy('created_at', 'desc')->paginate($limit);

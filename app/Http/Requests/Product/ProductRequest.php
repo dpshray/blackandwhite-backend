@@ -30,6 +30,8 @@ class ProductRequest extends FormRequest
             'pattern'=>'required|string|max:250',
             'fabric' => 'required|string|max:250',
             'material'=>'required|string',
+            'bestseller' => 'sometimes|boolean',
+            'limited' => 'sometimes|boolean',
             'size_detail'=>'required|file|mimes:png,jpg',
             // Category
             'categories' => 'required|exists:categories,id',

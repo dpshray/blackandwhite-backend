@@ -21,7 +21,7 @@ class ProductDetailResource extends JsonResource
             'id' => $this->id,
             'title' => $this->name,
             'slug' => $this->slug,
-            'product_code'=>$this->product_code,
+            'product_code' => $this->product_code,
             'description' => $this->description,
             'price' => $this->price,
             'discount_price' => $this->discount_price,
@@ -29,12 +29,14 @@ class ProductDetailResource extends JsonResource
             'pattern' => $this->pattern,
             'fabric' => $this->fabric,
             'material' => $this->material,
+            'bestseller' => (bool) $this->bestseller,
+            'limited' => (bool) $this->limited,
             // 'image' => $this->getFirstMediaUrl('product', 'image') ?: null,
-            'size_detail'=>$this->getFirstMediaUrl(Product::SIZE_DETAIL),
+            'size_detail' => $this->getFirstMediaUrl(Product::SIZE_DETAIL),
             'image' => $this->getMedia(Product::MEDIA_NAME)->map(function ($media) {
                 return $media->getUrl();
             }),
-            'main_image'=>$this->getFirstMediaUrl(Product::MAIN_IMAGE),
+            'main_image' => $this->getFirstMediaUrl(Product::MAIN_IMAGE),
             'categories' => $this->categories->map(function ($category) {
                 return [
                     'categories_id' => $category->id,

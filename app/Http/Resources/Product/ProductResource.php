@@ -28,6 +28,8 @@ class ProductResource extends JsonResource
             'pattern' => $this->pattern,
             'fabric' => $this->fabric,
             'material' => $this->material,
+            'bestseller'=> (bool) $this->bestseller,
+            'limited'=> (bool) $this->limited,
             // 'image' => $this->getFirstMediaUrl('product', 'image') ?: null,
             'size_detail'=>$this->getFirstMediaUrl(Product::SIZE_DETAIL),
             'image' => $this->getMedia(Product::MEDIA_NAME)->map(function ($media) {

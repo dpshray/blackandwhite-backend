@@ -36,7 +36,8 @@ class ProductController extends Controller
                 'pattern' => $request->pattern,
                 'fabric' => $request->fabric,
                 'material' => $request->material,
-
+                'bestseller' => $request->bestseller ?? false,
+                'limited' => $request->limited ?? false,
             ]);
 
             if (!$product) {
@@ -94,6 +95,8 @@ class ProductController extends Controller
                 'pattern'     => $request->pattern,
                 'fabric'      => $request->fabric,
                 'material'    => $request->material,
+                'bestseller'  => $request->bestseller ?? false,
+                'limited'     => $request->limited ?? false,
             ]);
             if ($request->hasFile('images')) {
                 // Delete only if new images exist

@@ -31,6 +31,8 @@ class Product extends Model implements HasMedia
         'fabric',
         'material',
         'product_code',
+        'bestseller',
+        'limited',
     ];
     public function categories()
     {

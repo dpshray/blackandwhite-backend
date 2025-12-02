@@ -23,9 +23,9 @@ class BannerRequest extends FormRequest
     {
         return [
             //
-            'title' => 'required|string|max:30',
-            'subtitle' => 'sometimes',
-            'url' => 'required|string',
+            'title' => 'sometimes|nullable|string',
+            'subtitle' => 'sometimes|nullable|string',
+            'url' => 'sometimes|nullable|string',
             'image'   => 'required|file|mimes:png,jpg'
         ];
     }
