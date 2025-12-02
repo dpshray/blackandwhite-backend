@@ -51,7 +51,9 @@ class ProductController extends Controller
                     $product->addMedia($image)->toMediaCollection(Product::MEDIA_NAME);
                 }
             }
-
+            if ($request->hasFile('size_detail')) {
+                $product->addMedia($request->size_detail)->toMediaCollection(Product::SIZE_DETAIL);
+            }
             // MAIN_IMAGE image to product
             if ($request->hasFile('main_image')) {
                 $product->addMedia($request->main_image)->toMediaCollection(Product::MAIN_IMAGE);
@@ -82,7 +84,6 @@ class ProductController extends Controller
     public function update_product(UpdateProductRequest $request, Product $product)
     {
         DB::beginTransaction();
-
         try {
             $product->update([
                 'name'        => $request->name,
@@ -94,12 +95,9 @@ class ProductController extends Controller
                 'fabric'      => $request->fabric,
                 'material'    => $request->material,
             ]);
-
             if ($request->hasFile('images')) {
-
                 // Delete only if new images exist
                 $product->clearMediaCollection(Product::MEDIA_NAME);
-
                 foreach ($request->file('images') as $image) {
                     $product->addMedia($image)->toMediaCollection(Product::MEDIA_NAME);
                 }
@@ -116,50 +114,38 @@ class ProductController extends Controller
             }
             $product->categories()->sync($request->categories);
 
-            // Only process variants if variant data is provided
-            if ($request->has('variant') && !empty($request->variant)) {
-                $existingVariantIds  = $product->variants->pluck('id')->toArray();
-                $incomingVariantIds = [];
-
-                foreach ($request->variant as $index => $variantData) {
-
-                    // ------------------------ UPDATE EXISTING VARIANT ------------------------
-                    if (isset($variantData['id'])) {
-
-                        $variant = Variant::find($variantData['id']);
-
-                        if ($variant && $variant->product_id === $product->id) {
-
-                            // Update fields
-                            $variant->update([
-                                'size'   => $variantData['size'],
-                                'color'  => $variantData['color'],
-                                'stock'  => $variantData['stock'],
-                            ]);
-                            $incomingVariantIds[] = $variant->id;
-                        }
-                    } else {
-                        // ------------------------ CREATE NEW VARIANT ------------------------
-
-                        $newVariant = Variant::create([
-                            'product_id' => $product->id,
-                            'size'       => $variantData['size'],
-                            'color'      => $variantData['color'],
-                            'stock'      => $variantData['stock'],
+            // Handle variants - delete old ones first to prevent duplicates
+            $variantIds = [];
+            foreach ($request->variant as $index => $variantData) {
+                // ------------------------ UPDATE EXISTING VARIANT ------------------------
+                if (isset($variantData['id'])) {
+                    $variant = Variant::find($variantData['id']);
+                    if ($variant && $variant->product_id === $product->id) {
+                        // Update fields
+                        $variant->update([
+                            'size'   => $variantData['size'],
+                            'color'  => $variantData['color'],
+                            'stock'  => $variantData['stock'],
                         ]);
-
-                        $incomingVariantIds[] = $newVariant->id;
+                        $variantIds[] = $variantData['id'];
                     }
-                }
-                // Delete variants that are not in the incoming request
-                $variantsToDelete = array_diff($existingVariantIds, $incomingVariantIds);
-                 if (!empty($variantsToDelete)) {
-                    Variant::destroy($variantsToDelete);
+                } else {
+                    // ------------------------ CREATE NEW VARIANT ------------------------
+                    $newVariant = Variant::create([
+                        'product_id' => $product->id,
+                        'size'       => $variantData['size'],
+                        'color'      => $variantData['color'],
+                        'stock'      => $variantData['stock'],
+                    ]);
+                    $variantIds[] = $newVariant->id;
                 }
             }
 
+            // Delete variants that are no longer in the request
+            Variant::where('product_id', $product->id)
+                ->whereNotIn('id', $variantIds)
+                ->delete();
             DB::commit();
-
             return $this->apiSuccess("Product updated successfully", $product->load('variants', 'categories'));
         } catch (Exception $e) {
             DB::rollBack();
@@ -196,6 +182,15 @@ class ProductController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return $this->apiError("Failed to restore product: " . $e->getMessage());
+        }
+    }
+    function delete_variant(Variant $variant)
+    {
+        try {
+            $variant->delete();
+            return $this->apiSuccess("Variant deleted successfully.");
+        } catch (Exception $e) {
+            return $this->apiError("Failed to delete variant: " . $e->getMessage());
         }
     }
 }
