@@ -16,7 +16,7 @@ class AdminOrderDetailCollection extends ResourceCollection
     {
         // return parent::toArray($request);
         return [
-            'data' => AdminOrderDetailResource::collection($this->collection),
+            'data' => AdminOrderDetailresource::collection($this->collection),
             'meta' => [
                 'current_page' => $this->currentPage(),
                 'last_page'    => $this->lastPage(),
