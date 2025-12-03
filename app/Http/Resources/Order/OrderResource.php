@@ -22,9 +22,9 @@ class OrderResource extends JsonResource
             'status' => $this->status,
             'items' => $this->items->map(function ($item) {
                 return [
-                    'product_name' => $item?->product?->name ?? null,
-                    'variant_size' => $item?->variant?->size ?? null,
-                    'variant_color' => $item?->variant?->color ?? null,
+                    'product_name' => $item?->product_name ?? null,
+                    'variant_size' => $item?->size ?? null,
+                    'variant_color' => $item?->color ?? null,
                     'quantity' => $item?->quantity,
                     'discount_price' => $item?->product?->discount_price ?? null,
                     'price' => $item?->product?->price ?? null,

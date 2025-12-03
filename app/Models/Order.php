@@ -11,7 +11,13 @@ class Order extends Model
         'user_id',
         'billing_information_id',
         'total_amount',
-        'status'
+        'status',
+        'address_details',
+        'payment_status',
+    ];
+    protected $casts = [
+        'address_details' => 'array',
+        'total_amount' => 'decimal:2',
     ];
     public function orderItems()
     {

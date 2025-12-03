@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Order\OrderResource;
+use App\Models\BillingInformation;
 use App\Models\Cart;
 use App\Models\CheckoutSession;
 use App\Models\Order;
@@ -27,7 +28,9 @@ class OrderController extends Controller
         $user = Auth::user();
         $delivery_fee = 200;
         $subtotal = 0;
-
+        $addressDetails = BillingInformation::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
         try {
             DB::beginTransaction();
 
@@ -40,10 +43,21 @@ class OrderController extends Controller
                     'total_amount' => 0,
                     'status' => 'Pending',
                     'billing_information_id' => $id,
+                    'address_details' => [
+                        'first_name'     => $addressDetails->first_name,
+                        'last_name'      => $addressDetails->last_name,
+                        'email'          => $addressDetails->email,
+                        'state'          => $addressDetails->state,
+                        'city'           => $addressDetails->city,
+                        'address'        => $addressDetails->address,
+                        'contact_number' => $addressDetails->contact_number,
+                    ],
+                    'payment_status' => 'unpaid',
                 ]);
 
                 foreach ($cartItems as $item) {
                     $product = Product::findOrFail($item->product_id);
+                    $variant = Variant::findOrFail($item->variant_id);
                     $price = $product->discount_price ?? $product->price;
                     $lineTotal = $price * $item->quantity;
                     $subtotal += $lineTotal;
@@ -52,6 +66,9 @@ class OrderController extends Controller
                         'product_id' => $item->product_id,
                         'variant_id' => $item->variant_id,
                         'quantity' => $item->quantity,
+                        'size' => $variant->size,
+                        'color' => $variant->color,
+                        'product_name' => $product->name,
                         'total_amount' => $lineTotal,
                     ]);
                 }
@@ -80,10 +97,21 @@ class OrderController extends Controller
                     'total_amount' => 0,
                     'status' => 'Pending',
                     'billing_information_id' => $id,
+                    'address_details' => [
+                        'first_name'     => $addressDetails->first_name,
+                        'last_name'      => $addressDetails->last_name,
+                        'email'          => $addressDetails->email,
+                        'state'          => $addressDetails->state,
+                        'city'           => $addressDetails->city,
+                        'address'        => $addressDetails->address,
+                        'contact_number' => $addressDetails->contact_number,
+                    ],
+                    'payment_status' => 'unpaid',
                 ]);
 
 
                 $product = Product::findOrFail($checkout->product_id);
+                $variant = Variant::findOrFail($checkout->variant_id);
                 $price = $product->discount_price ?? $product->price;
 
                 $lineTotal = $price * $checkout->quantity;
@@ -93,6 +121,9 @@ class OrderController extends Controller
                     'product_id' => $checkout->product_id,
                     'variant_id' => $checkout->variant_id,
                     'quantity' => $checkout->quantity,
+                    'size' => $variant->size,
+                    'color' => $variant->color,
+                    'product_name' => $product->name,
                     'total_amount' => $lineTotal,
                 ]);
 

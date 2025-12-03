@@ -38,13 +38,22 @@ class AdminOrderDetailresource extends JsonResource
                 'address'        => $this->billingInformation->address,
                 'contact_number' => $this->billingInformation->contact_number,
             ] : null,
-
+            'address_details' => [
+                'first_name'     => $this->address_details['first_name'] ?? null,
+                'last_name'      => $this->address_details['last_name'] ?? null,
+                'email'          => $this->address_details['email'] ?? null,
+                'state'          => $this->address_details['state'] ?? null,
+                'city'           => $this->address_details['city'] ?? null,
+                'address'        => $this->address_details['address'] ?? null,
+                'contact_number' => $this->address_details['contact_number'] ?? null,
+            ],
+            'payment_status' => $this->payment_status,
             'items' => $this->items->map(function ($item) {
                 return [
-                    'product_name'  => $item->product?->name,
+                    'product_name'  => $item->product_name,
                     'main_image'    => $item->product?->getFirstMediaUrl(Product::MAIN_IMAGE),
-                    'variant_size'  => $item->variant?->size ?? null,
-                    'variant_color' => $item->variant?->color ?? null,
+                    'variant_size'  => $item->size ?? null,
+                    'variant_color' => $item?->color ?? null,
                     'quantity'      => $item->quantity,
                     'price'         => $item->total_amount,
                 ];
