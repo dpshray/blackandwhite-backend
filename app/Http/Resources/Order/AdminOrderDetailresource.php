@@ -51,6 +51,8 @@ class AdminOrderDetailresource extends JsonResource
             'items' => $this->items->map(function ($item) {
                 return [
                     'product_name'  => $item->product_name,
+                    'product_id'    => $item->product_id,
+                    'variant_id'   => $item->variant_id,
                     'main_image'    => $item->product?->getFirstMediaUrl(Product::MAIN_IMAGE),
                     'variant_size'  => $item->size ?? null,
                     'variant_color' => $item?->color ?? null,
