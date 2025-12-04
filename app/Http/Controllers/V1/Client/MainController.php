@@ -35,6 +35,7 @@ class MainController extends Controller
         }
         if ($product_name) {
             $query->where('name', 'like', '%' . $product_name . '%');
+            $query->orWhere('product_code', 'like', '%' . $product_name . '%');
         }
         // filter by size
         if ($size) {

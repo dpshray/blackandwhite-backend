@@ -29,16 +29,16 @@ class AdminOrderDetailresource extends JsonResource
             ],
 
             // 🔹 Only show the billing info linked to this order:
-            'billing_information' => $this->billingInformation ? [
-                'first_name'     => $this->billingInformation->first_name,
-                'last_name'      => $this->billingInformation->last_name,
-                'email'          => $this->billingInformation->email,
-                'state'          => $this->billingInformation->state,
-                'city'           => $this->billingInformation->city,
-                'address'        => $this->billingInformation->address,
-                'contact_number' => $this->billingInformation->contact_number,
-            ] : null,
-            'address_details' => [
+            // 'billing_information' => $this->billingInformation ? [
+            //     'first_name'     => $this->billingInformation->first_name,
+            //     'last_name'      => $this->billingInformation->last_name,
+            //     'email'          => $this->billingInformation->email,
+            //     'state'          => $this->billingInformation->state,
+            //     'city'           => $this->billingInformation->city,
+            //     'address'        => $this->billingInformation->address,
+            //     'contact_number' => $this->billingInformation->contact_number,
+            // ] : null,
+            'billing_information' => [
                 'first_name'     => $this->address_details['first_name'] ?? null,
                 'last_name'      => $this->address_details['last_name'] ?? null,
                 'email'          => $this->address_details['email'] ?? null,
@@ -51,7 +51,7 @@ class AdminOrderDetailresource extends JsonResource
             'items' => $this->items->map(function ($item) {
                 return [
                     'product_name'  => $item->product_name,
-                    'product_id'    => $item->product_id,
+                    'product_id'    => $item->product?->product_code ?? null,
                     'variant_id'   => $item->variant_id,
                     'main_image'    => $item->product?->getFirstMediaUrl(Product::MAIN_IMAGE),
                     'variant_size'  => $item->size ?? null,
