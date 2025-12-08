@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Variant;
 use App\ResponseTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class DashboardController extends Controller
         $startOfMonth = Carbon::now()->startOfMonth();
 
         // Get all completed orders
-        $orders = Order::where('status', 'completed')->get();
+        $orders = Order::where('status', 'Delivered')->get();
 
         $todayRevenue = 0;
         $weekRevenue = 0;
@@ -119,14 +120,15 @@ class DashboardController extends Controller
     {
         $products = Product::all();
         $total_product = Product::count();
+        $variants= Variant::all();
         $in_stock = 0;
         $out_stock = 0;
         $low_stock = 0;
 
-        foreach ($products as $product) {
-            if ($product->quantity > 5) {
+        foreach ($variants as $variant) {
+            if ($variant->stock > 5) {
                 $in_stock++;
-            } elseif ($product->quantity > 0 && $product->quantity <= 5) {
+            } elseif ($variant->stock > 0 && $variant->stock <= 5) {
                 $low_stock++;
             } else {
                 $out_stock++;
