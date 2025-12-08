@@ -8,6 +8,7 @@ use App\Http\Controllers\V1\Admin\Notification\AdminOrderNotificationController;
 use App\Http\Controllers\V1\Admin\ProductController;
 use App\Http\Controllers\V1\Admin\Setting\AdminSettingController;
 use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\Admin\Whatapp\AdminOrderWhatappController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Auth\GoogleAuthController;
 use App\Http\Controllers\V1\Client\BillingInformationController;
@@ -97,6 +98,9 @@ Route::controller(ContactController::class)->group(function(){
     Route::post('/store-contact','store');
     Route::delete('/delete-contact/{contact}','delete');
 });
+
+//whatapp order
+route::post('/whatapp-order', [AdminOrderWhatappController::class, 'store']);
 
 //Admin section
 Route::prefix('admin')->group(function () {
