@@ -138,8 +138,8 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('notifications', AdminOrderNotificationController::class)->only(['index', 'update']);
         Route::controller(AdminSettingController::class)->group(function () {
             Route::post('/delivery-charge', 'deliveryCharge');
-            Route::get('/get-delivery-charge', 'getDeliveryCharge');
         });
     });
+    Route::get('/get-delivery-charge', [AdminSettingController::class, 'getDeliveryCharge']);
 });
 
