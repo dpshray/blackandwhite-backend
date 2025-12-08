@@ -4,7 +4,9 @@ use App\Http\Controllers\V1\Admin\AdminOrderController;
 use App\Http\Controllers\V1\Admin\BannerController;
 use App\Http\Controllers\V1\Admin\CategoriesController;
 use App\Http\Controllers\V1\Admin\DashboardController;
+use App\Http\Controllers\V1\Admin\Notification\AdminOrderNotificationController;
 use App\Http\Controllers\V1\Admin\ProductController;
+use App\Http\Controllers\V1\Admin\Setting\AdminSettingController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Auth\GoogleAuthController;
@@ -132,6 +134,11 @@ Route::prefix('admin')->group(function () {
         Route::controller(AdminOrderController::class)->group(function () {
             Route::get('/all-order', 'all_order');
             Route::post('/update-order/{order}', 'update_order');
+        });
+        Route::apiResource('notifications', AdminOrderNotificationController::class)->only(['index', 'update']);
+        Route::controller(AdminSettingController::class)->group(function () {
+            Route::post('/delivery-charge', 'deliveryCharge');
+            Route::get('/get-delivery-charge', 'getDeliveryCharge');
         });
     });
 });

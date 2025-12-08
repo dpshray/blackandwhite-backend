@@ -7,6 +7,7 @@ use App\Http\Requests\Cart\CartRequest;
 use App\Http\Requests\Cart\UpdateCartRequest;
 use App\Http\Resources\Cart\CartCollection;
 use App\Models\Cart;
+use App\Models\Setting;
 use App\Models\Variant;
 use App\ResponseTrait;
 use Illuminate\Http\Request;
@@ -20,7 +21,6 @@ class CartController extends Controller
     {
         $subtotal = 0;
         $total = 0;
-        $delivery_charge = 200;
         $user = Auth::user();
         $cart = Cart::with('product', 'variant')->where('user_id', $user->id)->get();
         $total_cart = Cart::where('user_id', $user->id)->count();
@@ -32,6 +32,8 @@ class CartController extends Controller
             $sellingPrice = $item->product->discount_price ?? $originalPrice;
             $subtotal += $sellingPrice * $item->quantity;
         }
+        $delivery_charge_setting = Setting::where('key', 'delivery_charge')->first();
+        $delivery_charge = $delivery_charge_setting ? $delivery_charge_setting->value : 0;
         $total = $subtotal + $delivery_charge;
         $cart = new CartCollection($cart);
         // $cart = $cart->merge(['total_cart' => $total_cart]);
@@ -74,6 +76,10 @@ class CartController extends Controller
     function update_cart(Cart $cart, UpdateCartRequest $request)
     {
         $user = Auth::user();
+        $stock = $cart->variant->stock;
+        if ($request->quantity > $stock) {
+            return $this->apiError('Requested quantity not available in stock');
+        }
         $data = $cart->update([
             'quantity' => $request->quantity,
         ]);

@@ -4,18 +4,21 @@ namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Order\OrderResource;
+use App\Models\AdminNotification;
 use App\Models\BillingInformation;
 use App\Models\Cart;
 use App\Models\CheckoutSession;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Models\Variant;
 use App\ResponseTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Collection\Set;
 
 use function Symfony\Component\Clock\now;
 
@@ -26,7 +29,7 @@ class OrderController extends Controller
     public function add_order(Request $request, $id)
     {
         $user = Auth::user();
-        $delivery_fee = 200;
+        $delivery_fee = Setting::where('key', 'delivery_charge')->value('value') ?? 0;
         $subtotal = 0;
         $addressDetails = BillingInformation::where('id', $id)
             ->where('user_id', $user->id)
@@ -76,7 +79,9 @@ class OrderController extends Controller
                 $order->update([
                     'total_amount' => $subtotal + $delivery_fee,
                 ]);
-
+                $variant->update([
+                    'stock' => $variant->stock - $item->quantity,
+                ]);
                 // delete cart only in cart mode
                 cart::where('user_id', $user->id)->delete();
             }
@@ -126,12 +131,18 @@ class OrderController extends Controller
                     'product_name' => $product->name,
                     'total_amount' => $lineTotal,
                 ]);
-
+                $variant->update([
+                    'stock' => $variant->stock - $checkout->quantity,
+                ]);
                 $order->update([
                     'total_amount' => $subtotal + $delivery_fee,
                 ]);
             }
-
+            AdminNotification::create([
+                'title' => 'New Order Placed',
+                'message' => "Order #{$order->id} has been placed by user {$user->name}.",
+                'is_read' => false,
+            ]);
             DB::commit();
             return $this->apiSuccess("Checkout successful. Your order has been placed.");
         } catch (Exception $e) {
@@ -171,11 +182,13 @@ class OrderController extends Controller
     function order_edit(Request $request, Order $order)
     {
         $user = Auth::user();
-        // $request->validate([
-        //     'status' => 'required|in:Cancelled'
-        // ]);
         $update = $order->update([
             'status' => 'Cancelled'
+        ]);
+        AdminNotification::create([
+            'title' => 'Order Cancelled',
+            'message' => "Order #{$order->id} has been cancelled by user {$user->name}.",
+            'is_read' => false,
         ]);
         if (!$update) {
             return $this->apiError('Failed to update');
