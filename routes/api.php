@@ -143,6 +143,10 @@ Route::prefix('admin')->group(function () {
         Route::controller(AdminSettingController::class)->group(function () {
             Route::post('/delivery-charge', 'deliveryCharge');
         });
+        Route::controller(AdminOrderWhatappController::class)->group(function () {
+            Route::get('/all-whatsapp-order', 'index');
+            Route::post('/update-whatsapp-order/{whatappsOrder}', 'update');
+        });
     });
     Route::get('/get-delivery-charge', [AdminSettingController::class, 'getDeliveryCharge']);
 });

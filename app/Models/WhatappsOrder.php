@@ -16,5 +16,6 @@ class WhatappsOrder extends Model
         'size',
         'color',
         'date',
+        'order_status',
     ];
 }
