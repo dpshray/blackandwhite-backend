@@ -23,14 +23,14 @@ class WhatappOrderRequest extends FormRequest
     {
         return [
             //
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'address' => 'required|string',
-            'email' => 'nullable|email',
-            'product_id' => 'required|exists:products,id',
+            'name' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
+            'email' => 'nullable|string',
+            'product_id' => 'nullable|string',
             'size' => 'nullable|string',
             'color' => 'nullable|string',
-            'date' => 'required|date',
+            'date' => 'nullable|string',
         ];
     }
 }
