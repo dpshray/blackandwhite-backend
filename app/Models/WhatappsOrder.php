@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class WhatappOrder extends Model
+class WhatappsOrder extends Model
 {
     //
     protected $fillable = [
@@ -12,7 +12,7 @@ class WhatappOrder extends Model
         'phone',
         'address',
         'email',
-        'product_id',
+        'product_code',
         'size',
         'color',
         'date',

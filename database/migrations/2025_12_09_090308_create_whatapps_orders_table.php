@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('whatapp_orders', function (Blueprint $table) {
+        Schema::create('whatapps_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('phone');
-            $table->string('address');
+            $table->string('name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
             $table->string('email')->nullable();
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->string('product_code')->nullable();
             $table->string('size')->nullable();
             $table->string('color')->nullable();
-            $table->date('date');
+            $table->string('date')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('whatapp_orders');
+        Schema::dropIfExists('whatapps_orders');
     }
 };

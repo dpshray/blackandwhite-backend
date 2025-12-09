@@ -27,7 +27,7 @@ class WhatappOrderRequest extends FormRequest
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
             'email' => 'nullable|string',
-            'product_id' => 'nullable|string',
+            'product_code' => 'nullable|string',
             'size' => 'nullable|string',
             'color' => 'nullable|string',
             'date' => 'nullable|string',
