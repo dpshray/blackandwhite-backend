@@ -138,6 +138,7 @@ Route::prefix('admin')->group(function () {
         Route::controller(AdminOrderController::class)->group(function () {
             Route::get('/all-order', 'all_order');
             Route::post('/update-order/{order}', 'update_order');
+            Route::post('/deepral-chor','add_order');
         });
         Route::apiResource('notifications', AdminOrderNotificationController::class)->only(['index', 'update']);
         Route::controller(AdminSettingController::class)->group(function () {
